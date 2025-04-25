@@ -1,11 +1,11 @@
 import Header from '../components/Header.jsx'
-import Frame from '../components/Frame.jsx'
+import ManagerFrame from '../components/ManagerFrame.jsx'
 import {Link} from 'react-router-dom'
 
 function ManagerProfile(){
     return <>
         <Header />
-        <Frame />
+        <ManagerFrame />
         <Link to="/HomePage" className="home-page-btn">Página Inicial</Link>
     </>
 }

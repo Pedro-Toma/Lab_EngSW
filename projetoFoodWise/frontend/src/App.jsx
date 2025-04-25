@@ -2,6 +2,9 @@ import ManagerProfile from './pages/ManagerProfile.jsx'
 import ManagementData from './pages/ManagementData.jsx'
 import GeneralData from './pages/GeneralData.jsx'
 import HomePage from './pages/HomePage.jsx'
+import InfoOp from './pages/InfoOp.jsx'
+import WasteMonitoring from './pages/WasteMonitoring.jsx'
+import FinancialManagement from './pages/FinancialManagement.jsx'
 import {Routes, Route} from 'react-router-dom'
 
 function App() {
@@ -13,6 +16,9 @@ function App() {
         <Route path='/ManagementData' element={<ManagementData />}/>
         <Route path='/GeneralData' element={<GeneralData />}/>
         <Route path='/HomePage' element={<HomePage />}/>
+        <Route path='/ManagementData/OperationalInfo' element={<InfoOp />}/>
+        <Route path='/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
+        <Route path='/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
       </Routes>
     </main>
   )

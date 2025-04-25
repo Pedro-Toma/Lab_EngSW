@@ -1,6 +1,6 @@
 import RestaurantList from "./RestaurantList"
 
-function Frame(){
+function ManagerFrame(){
 
     function addRestaurant() {
         console.log("Restaurante Adicionado")
@@ -10,6 +10,7 @@ function Frame(){
         { id: 1, name: "Green Day", image: "src/assets/GreenDay.jpg"},
         { id: 2, name: "DOM", image: "src/assets/dom.jpg"}
     ]
+    
     return <div className="frame_perfil">
         <h1>Meus Restaurantes</h1>
         <RestaurantList restaurants={restaurants}/>
@@ -17,4 +18,4 @@ function Frame(){
     </div>
 }
 
-export default Frame
+export default ManagerFrame
