@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage.jsx'
 import InfoOp from './pages/InfoOp.jsx'
 import WasteMonitoring from './pages/WasteMonitoring.jsx'
 import FinancialManagement from './pages/FinancialManagement.jsx'
+import RestaurantProfile from './pages/RestaurantProfile.jsx'
 import {Routes, Route} from 'react-router-dom'
 
 function App() {
@@ -12,13 +13,14 @@ function App() {
   return (
     <main className="main-content">
       <Routes>
-        <Route path='/' element={<ManagerProfile />}/>
-        <Route path='/ManagementData' element={<ManagementData />}/>
-        <Route path='/GeneralData' element={<GeneralData />}/>
-        <Route path='/HomePage' element={<HomePage />}/>
-        <Route path='/ManagementData/OperationalInfo' element={<InfoOp />}/>
-        <Route path='/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
-        <Route path='/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
+        <Route path='/' element={<HomePage />}/>
+        <Route path='/ManagerProfile' element={<ManagerProfile />}/>
+        <Route path='/ManagerProfile/GeneralData' element={<GeneralData />}/>
+        <Route path='/ManagerProfile/ManagementData' element={<ManagementData />}/>
+        <Route path='/ManagerProfile/ManagementData/OperationalInfo' element={<InfoOp />}/>
+        <Route path='/ManagerProfile/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
+        <Route path='/ManagerProfile/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
+        <Route path='/id/RestaurantProfile' element={<RestaurantProfile />}/>
       </Routes>
     </main>
   )

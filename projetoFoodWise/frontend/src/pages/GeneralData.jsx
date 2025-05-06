@@ -9,8 +9,8 @@ function GeneralData(){
         <h1 className="logo-middle">FoodWise</h1>
         <GeneralFrame />
         <div className="general-links">
-            <Link to="/" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
-            <Link to="/ManagementData" className="go-to-page">Dados Gerenciais<img src={ChevronsRight}/></Link>
+            <Link to="/ManagerProfile" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
+            <Link to="/ManagerProfile/ManagementData" className="go-to-page">Dados Gerenciais<img src={ChevronsRight}/></Link>
         </div>
     </div>
 }

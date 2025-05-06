@@ -8,8 +8,8 @@ function ManagementData(){
         <h1 className="logo-middle">FoodWise</h1>
         <ManagementFrame />
         <div className="management-links">
-            <Link to="/GeneralData" className="go-to-page"><img src={ChevronsLeft}/>Dados Gerais</Link>
-            <Link to="/" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
+            <Link to="/ManagerProfile/GeneralData" className="go-to-page"><img src={ChevronsLeft}/>Dados Gerais</Link>
+            <Link to="/ManagerProfile" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
         </div>
     </>
 }

@@ -8,8 +8,8 @@ function WasteMonitoring(){
         <h1 className="logo-middle">FoodWise</h1>
         <WasteFrame />
         <div className="waste-links">
-            <Link to="/" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
-            <Link to="/ManagementData" className="go-to-page"><img src={ChevronsLeft}/>Dados Gerenciais</Link>
+            <Link to="/ManagerProfile" className="go-to-page"><img src={ChevronsLeft}/>Perfil do Gerente</Link>
+            <Link to="/ManagerProfile/ManagementData" className="go-to-page"><img src={ChevronsLeft}/>Dados Gerenciais</Link>
         </div>
     </div>
 }

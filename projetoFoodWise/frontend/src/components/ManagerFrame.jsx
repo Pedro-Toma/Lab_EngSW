@@ -7,8 +7,8 @@ function ManagerFrame(){
     }
 
     const restaurants = [
-        { id: 1, name: "Green Day", image: "src/assets/GreenDay.jpg"},
-        { id: 2, name: "DOM", image: "src/assets/dom.jpg"}
+        { id: 1, name: "Green Day", image: "GreenDay"},
+        { id: 2, name: "DOM", image: "dom"}
     ]
     
     return <div className="frame_perfil">
