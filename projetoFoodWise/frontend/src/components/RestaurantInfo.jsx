@@ -3,8 +3,9 @@ import PriceIndex from "./PriceIndex"
 
 function RestaurantInfo({restaurant}){
 
-    const res_image = `/assets/${restaurant.image}.jpg`;
+    const res_image = `/assets/${restaurant.id}.jpg`;
 
+    console.log(restaurant)
     return <div className="restaurant-info-container">
         <h1>{restaurant.name}</h1>
         <div className="restaurant-img-ratings">

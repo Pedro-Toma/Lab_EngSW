@@ -20,7 +20,7 @@ function App() {
         <Route path='/ManagerProfile/ManagementData/OperationalInfo' element={<InfoOp />}/>
         <Route path='/ManagerProfile/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
         <Route path='/ManagerProfile/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
-        <Route path='/id/RestaurantProfile' element={<RestaurantProfile />}/>
+        <Route path='/RestaurantProfile/:id' element={<RestaurantProfile />}/>
       </Routes>
     </main>
   )
