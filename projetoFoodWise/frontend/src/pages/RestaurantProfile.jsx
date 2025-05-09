@@ -37,9 +37,11 @@ function RestaurantProfile(){
     return <div className="restaurante-profile-page">
         <h1 className="logo">FoodWise</h1>
         <div className="restaurant-profile">
-            <HorarioFuncionamento />
             {restaurant ? (
-                <RestaurantInfo restaurant={restaurant} />
+                <>
+                    <HorarioFuncionamento restaurant={restaurant}/>
+                    <RestaurantInfo restaurant={restaurant} />
+                </>
             ) : error ? (
                 <p> {error} </p>
             ) : (
