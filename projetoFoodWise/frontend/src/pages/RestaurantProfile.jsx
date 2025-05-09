@@ -20,6 +20,7 @@ function RestaurantProfile(){
                     cache: 'no-store'
                 })
                 if (!response.ok) {
+                    setError(`HTTP error: ${response.status}`)
                     throw new Error(`HTTP error: ${response.status}`)
                 } 
                 const data = await response.json()
@@ -39,8 +40,10 @@ function RestaurantProfile(){
             <HorarioFuncionamento />
             {restaurant ? (
                 <RestaurantInfo restaurant={restaurant} />
+            ) : error ? (
+                <p> {error} </p>
             ) : (
-                <p>Loading...</p>
+                <p> Loading... </p>
             )}
         </div>
         <Link to="/" id="restaurant-homepage-btn"className="home-page-btn">Página Inicial</Link>
