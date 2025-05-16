@@ -7,7 +7,7 @@ from fastapi import Depends
 
 username = "root"
 password = "mack"
-public_ip_EC2 = "34.229.88.64"
+public_ip_EC2 = "50.17.113.17"
 db_connection_str = f'mysql+pymysql://{username}:{password}@{public_ip_EC2}:3306/projeto-db'
 engine = create_engine(db_connection_str)
 
