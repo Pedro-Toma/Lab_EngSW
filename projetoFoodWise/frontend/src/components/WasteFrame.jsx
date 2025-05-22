@@ -1,8 +1,8 @@
 
 function WasteFrame(){
-    return <div className="frame_waste">
+    return <div className="frame_extra">
         <h1>Monitoramento de Desperdício</h1>
-        <form className="form-waste-data" action="index.php" method="POST">
+        <form className="form-extra-data" action="index.php" method="POST">
 
             <div className="waste-day">
                 <label for="day">Data </label>

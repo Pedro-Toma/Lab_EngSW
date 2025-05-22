@@ -4,11 +4,14 @@ import {Link} from 'react-router-dom'
 
 function ManagerProfile(){
     return <div className="manager-page">
+        <h1 className="logo">FoodWise</h1>
         <div className="manager-profile">
-            <HeaderManager />
+            <img className="profile_image" src="./src/assets/icone_perfil.png" />
             <ManagerFrame />
         </div>
-        <Link to="/" id="manager-homepage-btn" className="home-page-btn">Página Inicial</Link>
+        <div className="container-home-btn">
+            <Link to="/" id="manager-homepage-btn" className="home-page-btn">Página Inicial</Link>
+        </div>
     </div>
 }
 

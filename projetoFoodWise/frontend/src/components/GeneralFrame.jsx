@@ -1,5 +1,4 @@
-import Cardapio
- from "./Cardapio"
+import Cardapio from "./Cardapio"
 function GeneralFrame(){
 
     return <div className="frame-general-data">
