@@ -1,11 +1,13 @@
 import uvicorn
 import models
+import auth
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from database import engine, db_dependency
-from schemas import Restaurant, RestaurantOut, Manager, OpInfo, OpInfoOut, WasteInfo, WasteInfoOut, FinancialInfo, FinancialInfoOut, Dishes, DishesOut, DishDel
+from schemas import Restaurant, RestaurantOut, Manager, OpInfo, OpInfoOut, WasteInfo, WasteInfoOut, FinancialInfo, FinancialInfoOut, Dishes, DishesOut, DishDel, Token
 from typing import List
 from sqlalchemy import or_
 
@@ -25,6 +27,17 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
+security = HTTPBearer()
+
+# VERIFICAR TOKEN
+@app.get("/validate-token", status_code=status.HTTP_200_OK)
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    payload = auth.decode_token(token)
+
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
 # RESTAURANTS ENDPOINTS
 
 # GET (1 restaurante por ID)
@@ -42,8 +55,8 @@ async def retrieve_restaurant(restaurant_id: int, db: db_dependency):
 @app.post("/restaurant", status_code=status.HTTP_201_CREATED, tags=["Restaurants"])
 async def create_restaurant(restaurant: Restaurant, db: db_dependency):
     
-    existing_restaurant = db.query(models.Manager).filter(or_(  models.Restaurant.name == restaurant.name,
-                                                                models.Restaurant.address == restaurant.address)).first()
+    existing_restaurant = db.query(models.Restaurant).filter(      models.Restaurant.name == restaurant.name,
+                                                                models.Restaurant.address == restaurant.address).first()
     if existing_restaurant:
         raise HTTPException(status_code=400, detail="Restaurante já cadastrado!")
 
@@ -59,6 +72,12 @@ async def update_restaurant(restaurant_id: int, restaurant_update: Restaurant, d
     
     if db_restaurant is None:
         raise HTTPException(status_code=404, detail="Restaurante nao encontrado!")
+    
+    existing_restaurant = db.query(models.Restaurant).filter(   models.Restaurant.name == restaurant_update.name,
+                                                                models.Restaurant.address == restaurant_update.address,
+                                                                models.Restaurant.id != restaurant_id).first()
+    if existing_restaurant:
+        raise HTTPException(status_code=400, detail="Restaurante já cadastrado!")
     
     updated = False
     for key, value in restaurant_update.dict().items():
@@ -283,18 +302,41 @@ async def delete_dish(restaurant_id: int, dish_data: DishDel, db: db_dependency)
 
 # MANAGER ENDPOINTS
 
-# POST (1 gerente)
-@app.post("/manager", status_code=status.HTTP_201_CREATED, tags=["Managers"])
+# POST REGISTRO (1 gerente)
+@app.post("/manager/register", status_code=status.HTTP_201_CREATED, tags=["Managers"])
 async def create_manager(manager: Manager, db: db_dependency):
     
-    existing_manager = db.query(models.Manager).filter(models.Manager.username == manager.username).first()
+    existing_manager = db.query(models.Manager).filter(models.Manager.email == manager.email).first()
     
     if existing_manager:
-        raise HTTPException(status_code=400, detail="Nome de usuário já cadastrado! Escolha outro.")
+        raise HTTPException(status_code=400, detail="Email já cadastrado! Escolha outro.")
     
-    db_manager = models.Manager(**manager.dict())
+    manager_dict = manager.dict()
+    manager_dict['password'] = auth.hash_password(manager.password)
+    
+    print("Senha original:", manager.password)
+    print("Senha hashada:", manager_dict['password'])
+
+    db_manager = models.Manager(**manager_dict)
     db.add(db_manager)
     db.commit()
+
+# POST LOGIN (1 gerente)
+@app.post("/manager/login", status_code=status.HTTP_201_CREATED, tags=["Managers"])
+async def verify_manager(manager: Manager, db: db_dependency):
+    
+    existing_manager = db.query(models.Manager).filter(models.Manager.email == manager.email).first()
+    
+    if not existing_manager:
+        raise HTTPException(status_code=400, detail="Email não cadastrado! Escolha outro.")
+    
+    if not auth.verify_password(manager.password, existing_manager.password):
+        raise HTTPException(status_code=400, detail="Senha incorreta!")
+
+    # cria token JWT e retorna ele
+    access_token = auth.create_access_token(data={"sub": manager.email, "id": existing_manager.id})
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # GET (TODOS os restaurante de um gerente)
 @app.get("/manager/{manager_id}/restaurants", status_code=status.HTTP_200_OK, response_model=List[RestaurantOut], tags=["Managers"])
