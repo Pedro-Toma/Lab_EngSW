@@ -1,8 +1,10 @@
 import {Link} from 'react-router-dom'
 
-function RestaurantCardProfile(Props) {
+import trash from "../assets/trash.png"
 
-    const res_image = `/assets/${Props.image}.jpg`;
+function RestaurantCardProfile({name, image, removeRestaurant}) {
+
+    const res_image = `/assets/${image}.jpg`;
 
     return (
         <div className="restaurant-card-profile">
@@ -11,12 +13,13 @@ function RestaurantCardProfile(Props) {
             
             <div className="restaurant-info">
                 <div className="restaurant-name-report">
-                    <button className="restaurant-name-btn">{Props.name}</button>
+                    <button className="restaurant-name-btn">{name}</button>
                     <button className="private-report-btn">Relatório Privado</button>
                 </div>
                 <div className="restaurant-data">
                     <Link to="/ManagerProfile/GeneralData" className="general-data-btn">Dados Gerais</Link>
                     <Link to="/ManagerProfile/ManagementData" className="management-data-btn">Dados Gerenciais</Link>
+                    <button className="restaurant-delete-btn" onClick={removeRestaurant}><img src={trash}/></button>
                 </div>
             </div>
         </div>

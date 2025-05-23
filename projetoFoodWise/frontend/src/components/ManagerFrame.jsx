@@ -1,19 +1,26 @@
 import RestaurantList from "./RestaurantList"
 
-function ManagerFrame(){
+function ManagerFrame({restaurants, refreshRestaurants}){
 
     function addRestaurant() {
-        console.log("Restaurante Adicionado")
+        console.log("Adicionar restaurante ainda não implementado");
     }
 
-    const restaurants = [
-        { id: 1, name: "Green Day", image: "GreenDay"},
-        { id: 2, name: "DOM", image: "dom"}
-    ]
+    async function removeRestaurant(id) {
+        const token = localStorage.getItem("token")
+
+        await fetch(`http://localhost:8000/restaurant/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        });
+    refreshRestaurants();
+  }
     
     return <div className="frame_perfil">
         <h1>Meus Restaurantes</h1>
-        <RestaurantList restaurants={restaurants}/>
+        <RestaurantList restaurants={restaurants} removeRestaurant={removeRestaurant}/>
         <button className="add-restaurant-btn" onClick={addRestaurant}><img src="src/assets/addCircle.png"/></button>
     </div>
 }

@@ -3,18 +3,18 @@ function GeneralFrame(){
 
     return <div className="frame-general-data">
         <h1>Dados Gerais do Restaurante</h1>
-        <form className="form-general-data" action="index.php" method="POST" enctype="multipart/form-data"> 
+        <form className="form-general-data" action="index.php" method="POST" encType="multipart/form-data"> 
 
-            <label htmlFor="username">Nome </label>
-            <input type="text" id="username" placeholder="Nome" minlength="5" maxlength="15" required/>
+            <label htmlFor="restaurant-name">Nome </label>
+            <input type="text" id="restaurant-name" placeholder="Nome" minLength="5" maxLength="15" required/>
             
             <label htmlFor="address">Endereço completo </label>
-            <input type="text" id="address" placeholder="Rua" maxlength="40" required/>
-            <input type="text" id="neighborhood" placeholder="Bairro" maxlength="40" required/>
+            <input type="text" id="address" placeholder="Rua" maxLength="40" required/>
+            <input type="text" id="neighborhood" placeholder="Bairro" maxLength="40" required/>
             <input type="number" id="number" placeholder="Número"/>
 
             <label htmlFor="phone">Telefone </label>
-            <input type="tel" id="phone" placeholder="ex: (ddd)1234-5678" pattern="\(\d{2}\)\d{4,5}-\d{4}" minlength="5" maxlength="15" required/>
+            <input type="tel" id="phone" placeholder="ex: (ddd)1234-5678" pattern="\(\d{2}\)\d{4,5}-\d{4}" minLength="5" maxLength="15" required/>
             
             <h2>Formas de Pagamento </h2>
             <div className="payment">
@@ -37,10 +37,10 @@ function GeneralFrame(){
             <Cardapio />
 
             <div className="input-images">
-                <label for="menu_image"></label>
+                <label htmlFor="menu_image"></label>
                 <input type="file" id="menu_image" accept="image/png, image/jpeg"/>
 
-                <label for="restaurant_image"></label>
+                <label htmlFor="restaurant_image"></label>
                 <input type="file" id="restaurant_image" accept="image/png, image/jpeg"/>
             </div>
             

@@ -6,6 +6,8 @@ import InfoOp from './pages/InfoOp.jsx'
 import WasteMonitoring from './pages/WasteMonitoring.jsx'
 import FinancialManagement from './pages/FinancialManagement.jsx'
 import RestaurantProfile from './pages/RestaurantProfile.jsx'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
 import {Routes, Route} from 'react-router-dom'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
         <Route path='/ManagerProfile/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
         <Route path='/ManagerProfile/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
         <Route path='/RestaurantProfile/:id' element={<RestaurantProfile />}/>
+        <Route path='/Login' element={<Login />}/>
+        <Route path='/Register' element={<Register />}/>
       </Routes>
     </main>
   )
