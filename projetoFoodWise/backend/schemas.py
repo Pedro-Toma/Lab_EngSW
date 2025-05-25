@@ -1,26 +1,45 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Restaurant(BaseModel):
+    manager_id: int
     name: str
     address: str
-    rating: int
-    price: int
-    sustainability: int
-    monday_morning_hours: str
-    monday_afternoon_hours: str
-    tuesday_morning_hours: str
-    tuesday_afternoon_hours: str
-    wednesday_morning_hours: str
-    wednesday_afternoon_hours: str
-    thursday_morning_hours: str
-    thursday_afternoon_hours: str
-    friday_morning_hours: str
-    friday_afternoon_hours: str
-    saturday_morning_hours: str
-    saturday_afternoon_hours: str
-    sunday_morning_hours: str
-    sunday_afternoon_hours: str
-    manager_id: int
+    phone: Optional[str] = None
+    money: Optional[bool] = None
+    pix: Optional[bool] = None
+    credit: Optional[bool] = None
+    debit: Optional[bool] = None
+    voucher: Optional[bool] = None
+    monday_morning_opening: Optional[str] = None
+    monday_morning_closing: Optional[str] = None
+    monday_afternoon_opening: Optional[str] = None
+    monday_afternoon_closing: Optional[str] = None
+    tuesday_morning_opening: Optional[str] = None
+    tuesday_morning_closing: Optional[str] = None
+    tuesday_afternoon_opening: Optional[str] = None
+    tuesday_afternoon_closing: Optional[str] = None
+    wednesday_morning_opening: Optional[str] = None
+    wednesday_morning_closing: Optional[str] = None
+    wednesday_afternoon_opening: Optional[str] = None
+    wednesday_afternoon_closing: Optional[str] = None
+    thursday_morning_opening: Optional[str] = None
+    thursday_morning_closing: Optional[str] = None
+    thursday_afternoon_opening: Optional[str] = None
+    thursday_afternoon_closing: Optional[str] = None
+    friday_morning_opening: Optional[str] = None
+    friday_morning_closing: Optional[str] = None
+    friday_afternoon_opening: Optional[str] = None
+    friday_afternoon_closing: Optional[str] = None
+    saturday_morning_opening: Optional[str] = None
+    saturday_morning_closing: Optional[str] = None
+    saturday_afternoon_opening: Optional[str] = None
+    saturday_afternoon_closing: Optional[str] = None
+    sunday_morning_opening: Optional[str] = None
+    sunday_morning_closing: Optional[str] = None
+    sunday_afternoon_opening: Optional[str] = None
+    sunday_afternoon_closing: Optional[str] = None
+
 
 class RestaurantOut(Restaurant):
     id: int

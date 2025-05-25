@@ -9,6 +9,7 @@ import RestaurantProfile from './pages/RestaurantProfile.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import {Routes, Route} from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 function App() {
 
@@ -16,13 +17,15 @@ function App() {
     <main className="main-content">
       <Routes>
         <Route path='/' element={<HomePage />}/>
-        <Route path='/ManagerProfile' element={<ManagerProfile />}/>
-        <Route path='/ManagerProfile/GeneralData' element={<GeneralData />}/>
-        <Route path='/ManagerProfile/ManagementData' element={<ManagementData />}/>
-        <Route path='/ManagerProfile/ManagementData/OperationalInfo' element={<InfoOp />}/>
-        <Route path='/ManagerProfile/ManagementData/WasteMonitoring' element={<WasteMonitoring />}/>
-        <Route path='/ManagerProfile/ManagementData/FinancialManagement' element={<FinancialManagement />}/>
-        <Route path='/RestaurantProfile/:id' element={<RestaurantProfile />}/>
+        <Route element={<ProtectedRoute />}>
+          <Route path='/ManagerProfile' element={<ManagerProfile />}/>
+          <Route path='/ManagerProfile/:restaurant_id/GeneralData' element={<GeneralData />} />
+          <Route path='/ManagerProfile/:restaurant_id/ManagementData' element={<ManagementData />} />
+          <Route path='/ManagerProfile/:restaurant_id/ManagementData/OperationalInfo' element={<InfoOp />} />
+          <Route path='/ManagerProfile/:restaurant_id/ManagementData/WasteMonitoring' element={<WasteMonitoring />} />
+          <Route path='/ManagerProfile/:restaurant_id/ManagementData/FinancialManagement' element={<FinancialManagement />} />
+        </Route>
+        <Route path='/RestaurantProfile/:restaurant_id' element={<RestaurantProfile />}/>
         <Route path='/Login' element={<Login />}/>
         <Route path='/Register' element={<Register />}/>
       </Routes>

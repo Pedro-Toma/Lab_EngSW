@@ -322,6 +322,7 @@
   flex-direction: row;
   position: relative;
   justify-content: center;
+  flex-wrap: wrap
 }
 
 .restaurant-card-profile {
@@ -559,15 +560,19 @@
   color: #000000;
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 1em;
+  box-sizing: border-box;
 }
 
-.form-general-data input{
-  width: 100%;
-  height: 25px;
+.form-general-data > input{
+  width: 91%;
+  height: 2.5em;
   border: 2px solid;
   border-color: #929292;
   border-radius: 8px;
   margin-bottom: 10px;
+  margin-left: 2em;
+  box-sizing: border-box;
 }
 
 .payment{
@@ -580,7 +585,66 @@
   font-weight: 400;
   font-family: "Newsreader";
   color: #000000;
+  margin-left: 1em;
 }
+
+.working-hours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  padding: 1.5em;
+}
+
+.day {
+  flex: 1 1 calc(45%);
+  box-sizing: border-box;
+  border: 2px solid #bdbdbd;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.day h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+  line-height: 1.5;
+}
+
+.morning-afternoon {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.hours {
+  width: 45%;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.hours label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.3em;
+  margin-left: 0em;
+  text-align: center;
+}
+
+.hours input[type="time"] {
+  width: 60%;
+  padding: 0.3em;
+  font-size: 1rem;
+  border: 1px solid #999;
+  border-radius: 8px;
+}
+
 
 .reset-submit-btn{
   display: flex;

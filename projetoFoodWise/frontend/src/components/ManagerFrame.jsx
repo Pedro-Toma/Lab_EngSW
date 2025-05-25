@@ -2,10 +2,6 @@ import RestaurantList from "./RestaurantList"
 
 function ManagerFrame({restaurants, refreshRestaurants}){
 
-    function addRestaurant() {
-        console.log("Adicionar restaurante ainda não implementado");
-    }
-
     async function removeRestaurant(id) {
         const token = localStorage.getItem("token")
 
@@ -21,7 +17,7 @@ function ManagerFrame({restaurants, refreshRestaurants}){
     return <div className="frame_perfil">
         <h1>Meus Restaurantes</h1>
         <RestaurantList restaurants={restaurants} removeRestaurant={removeRestaurant}/>
-        <button className="add-restaurant-btn" onClick={addRestaurant}><img src="src/assets/addCircle.png"/></button>
+        <button className="add-restaurant-btn" onClick={() => window.location.href='/ManagerProfile/-1/GeneralData'}><img src="src/assets/addCircle.png"/></button>
     </div>
 }
 

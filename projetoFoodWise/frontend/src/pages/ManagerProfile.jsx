@@ -1,13 +1,14 @@
 import LogoutButton from '../components/LogoutButton.jsx';
 import ManagerFrame from '../components/ManagerFrame.jsx'
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
 import { useState, useEffect } from "react";
 
 function ManagerProfile(){
 
     const [restaurants, setRestaurants] = useState([]);
     const [managerId, setManagerId] = useState(null);
-    
+    const navigate = useNavigate();
+
     function parseJwt(token) {
         try {
             return JSON.parse(atob(token.split('.')[1]));
@@ -19,6 +20,7 @@ function ManagerProfile(){
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
+            navigate("/Login", { replace: true });
             return;
         }
         const decoded = parseJwt(token);
@@ -26,6 +28,8 @@ function ManagerProfile(){
             setManagerId(decoded.id);
         } else {
             console.error("Token inválido");
+            localStorage.removeItem("token");
+            navigate("/Login", { replace: true });
         }
     }, []);
 

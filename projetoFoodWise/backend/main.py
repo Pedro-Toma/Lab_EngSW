@@ -55,7 +55,7 @@ async def retrieve_restaurant(restaurant_id: int, db: db_dependency):
 @app.post("/restaurant", status_code=status.HTTP_201_CREATED, tags=["Restaurants"])
 async def create_restaurant(restaurant: Restaurant, db: db_dependency):
     
-    existing_restaurant = db.query(models.Restaurant).filter(      models.Restaurant.name == restaurant.name,
+    existing_restaurant = db.query(models.Restaurant).filter(   models.Restaurant.name == restaurant.name,
                                                                 models.Restaurant.address == restaurant.address).first()
     if existing_restaurant:
         raise HTTPException(status_code=400, detail="Restaurante já cadastrado!")
@@ -63,6 +63,8 @@ async def create_restaurant(restaurant: Restaurant, db: db_dependency):
     db_restaurant = models.Restaurant(**restaurant.dict())
     db.add(db_restaurant)
     db.commit()
+    db.refresh(db_restaurant)
+    return {"id": db_restaurant.id}
 
 # PUT (1 restaurante)
 @app.put("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, tags=["Restaurants"])
@@ -87,9 +89,10 @@ async def update_restaurant(restaurant_id: int, restaurant_update: Restaurant, d
     
     if updated:
         db.commit()
-        return {"message": "Restaurante atualizado com sucesso"}
+        db.refresh(db_restaurant)
+        return {"message": "Restaurante atualizado com sucesso", "id": restaurant_id}
     else:
-        return {"message": "Nenhuma alteração necessária"}
+        return {"message": "Nenhuma alteração necessária", "id": restaurant_id}
 
 # DELETE (1 restaurante por ID)
 @app.delete("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, tags=["Restaurants"])

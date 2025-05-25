@@ -6,7 +6,8 @@ function RestaurantList({restaurants,removeRestaurant}){
             <RestaurantCardProfile key={index} 
                             name={restaurant.name} 
                             image={restaurant.image}
-                            removeRestaurant={() => removeRestaurant(restaurant.id)}
+                            restaurant_id={restaurant.id}
+                            removeRestaurant={removeRestaurant}
             />
         ))}
     </div>
