@@ -1,4 +1,14 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+.loading{
+  display: block;
+  margin-top: 45vh;
+  margin-left: 45vw;
+}
 .logo{
   font-family: "Josefin Sans", sans-serif;
   color: #009951;
@@ -62,6 +72,214 @@
   margin-top: 2em;
 }
 
+/* Conteúdo da página inicial */
+
+.home-page-container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.header{
+  display: flex;
+  align-items: flex-start;
+  padding: 1em 2em;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.header a{
+  font-size: 1em;
+  height: 1em;
+}
+
+.home-links {
+  display: flex;
+  position: absolute;
+  top: 1em;
+  right: 2em;
+  gap: 1em;
+  box-sizing: border-box;
+}
+
+.slogan {
+  display: block;
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 5em;
+  font-weight: 350;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.res-reg {
+  display: block;
+  font-family: 'Neuton', serif;
+  font-style: italic;
+  font-size: 5em;
+  font-weight: 350;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.res-reg-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  margin-top: 2em;
+}
+
+.res-reg-btn {
+  width: 60vw;
+  height: 2.5em;
+  font-size: 1.2em;
+  padding: 0.5em;
+  border: 1px solid;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.res-reg-container input::placeholder {
+  text-align: center;
+  font-family: 'Newsreader', serif;
+  font-size: 1.3em;
+}
+
+.restaurant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;      
+  justify-content: center; 
+  max-width: 100vw;       
+  padding: 0.5em;
+  box-sizing: border-box; 
+}
+
+.restaurant-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  max-width: 20em;
+  box-shadow: 2px 2px 6px #535353;
+}
+
+.restaurant-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.restaurant-card img {
+  object-fit: contain;
+  width: 100%;
+}
+
+.home-res-image {
+  width: 20em;    
+  height: auto;       
+  display: block;     
+  object-fit: contain; 
+  border-radius: 8px; 
+  margin-top: 10px;  
+}
+
+.payment-methods ul {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.opening-hours {
+    margin-top: 1rem;
+}
+
+.invite {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  text-align: center;
+  padding-top: 2%;
+  padding-left: 10%;
+  padding-right: 10%;
+  box-sizing: border-box;
+}
+
+.invite h1 {
+  font-size: 3.3em;
+}
+
+.invite p {
+  font-size: 1.4em;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 2%;
+  box-sizing: border-box;
+}
+
+.reg-container{
+  display: flex;
+  width:100%;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin-bottom: 3%;
+}
+
+.reg-container button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid;
+  border-radius: 100px;
+  background-color: #009951;
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 2em;
+  font-family: 'newsreader';
+  height: 2em;
+  width: 8em;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.about-us {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  background-color: #009951;
+  text-align: center;
+  padding-left: 10%;
+  padding-right: 10%;
+  box-sizing: border-box;
+}
+
+.about-us h1 {
+  color:#ffffff;
+  font-size: 5em;
+  font-family: 'Neuton', serif;
+  font-style: italic;
+  font-weight: 100;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.about-us p {
+  color:#ffffff;
+  font-size: 1.4em;
+  font-family: 'Neuton', serif;
+  font-style: italic;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 2%;
+  box-sizing: border-box;
+}
+
 /* Conteúdo da página de registro */
 
 .frame-register{
@@ -121,6 +339,7 @@
   font-size: 1em;
   margin-top: 2em;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .frame-register a{
@@ -222,6 +441,7 @@
   font-size: 1em;
   margin-top: 2em;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .frame-login a{
@@ -283,11 +503,16 @@
 }
 
 .profile_image {
-  width: 8%;
-  margin-left: 3.5%;
-  margin-right: 3%;
+  width: 70%;
   object-fit: contain;
+  margin-bottom: 10%;
   box-sizing: border-box;
+}
+
+.image-logout{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .frame_perfil{
@@ -303,6 +528,7 @@
   width: 87%;
   box-sizing: border-box;
   overflow: scroll;
+  margin-right: 1%;
 }
 
 .frame_perfil h1{
@@ -332,7 +558,6 @@
   gap: 20px;
   margin: 30px;
   flex-wrap: wrap;
-
   border: 2px solid #ccc;
   border-radius: 10px;
   padding: 20px;
@@ -357,7 +582,7 @@
   flex-wrap: wrap;
 }
 
-.restaurant-info button:hover, .restaurant-info a:hover {
+.restaurant-info a:hover {
   background-color: #00b661;
 }
 
@@ -365,27 +590,45 @@
   display: flex;
   flex-direction: column;
   align-items:center;
-  gap: 20px;
+  height: 175px;
+  gap: 1.2em;
+  box-sizing: border-box;
 }
 
 .restaurant-name-btn {
-  font-size: 50px;
+  font-size: 40px;
   padding: 10px 30px;
-  background-color: #009951;
-  color: #ffffff;
+  background-color: #f8f8f8;
+  color: #000000;
   border: none;
-  width: 325px;
+  width: 315px;
   border-radius: 10px;
   cursor: pointer;
 }
 
-.private-report-btn {
+.menu-btn-manager {
   background-color: #009951;
   color: #ffffff;
   border: none;
   border-radius: 8px;
-  padding: 6px 20px;
-  width: 200px;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  width: 50%;
+  font-size: 2em;
+  max-width: 60%;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.private-report-btn {
+  font-family: 'newsreader';
+  background-color: #009951;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  width: 50%;
   font-size: 30px;
   cursor: pointer;
 }
@@ -645,6 +888,31 @@
   border-radius: 8px;
 }
 
+.input-images {
+  display: flex;
+  gap: 10%;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input-images input[type="file"] {
+  display: none;
+}
+
+.input-images label{
+  width: 40%;
+}
+
+.input-images label img{
+  background-color: #ffffff;
+  color: white;
+  width: 100%;  
+  height: auto;  
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 
 .reset-submit-btn{
   display: flex;
@@ -683,9 +951,10 @@
   display: flex;
   flex-direction: column;
   height: 60vh;
-  margin-top: 60px;
-  margin-left: 400px;
-  margin-right: 400px;
+  margin-top: 5%;
+  margin-left: 25%;
+  margin-right: 25%;
+  box-sizing: border-box;
 }
 
 .frame_extra h1{
@@ -732,19 +1001,25 @@
 
 .waste-sold{
   display: flex;
-  gap: 206px;
+  gap: 12.3em;
   align-items: center;
 }
 
 .waste-wasted{
   display: flex;
-  gap: 153px;
+  gap: 9em;
+  align-items: center;
+}
+
+.waste-exp{
+  display: flex;
+  gap: 5.2em;
   align-items: center;
 }
 
 .waste-misuse{
   display: flex;
-  gap: 100px;
+  gap: 5.75em;
   align-items: center;
 }
 
@@ -786,6 +1061,17 @@
   display: flex;
   gap: 32px;
   align-items: center;
+}
+
+.form-extra-data button{
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  height: 30px;
+  width: 150px;
+  font-size: 20px;
+  cursor: pointer;
 }
 
 /* Conteúdo da página de gestão financeira */
@@ -850,7 +1136,7 @@
   align-items: flex-start;
 }
 
-.menu-btn {
+.menu-btn-profile {
   font-family: "Newsreader";
   display: flex;
   justify-content: center;
@@ -958,6 +1244,147 @@
   position: relative;
   margin-bottom: 1%;
   margin-left: 1%;
+}
+
+/* Conteúdo da página de menu do restaurante */
+
+.menu-container{
+  display: flex;
+  flex-direction: row;
+  height: 80vh;
+}
+
+.menu-side{
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+}
+
+.menu-side img{
+  width: 95%;
+  height: auto;
+  margin-left: 2%;
+  margin-top: 7em;
+  margin-bottom: 7em;
+}
+
+.menu-links{
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: auto;
+  margin-left: 2em;
+  margin-bottom: 2em;
+}
+
+.frame-menu {
+  flex: 1;
+  margin: 1em;
+  border: 2px solid #000000;
+  border-radius: 20px;
+  width: auto;
+  box-sizing: border-box;
+}
+
+.frame-menu h1{
+  font-family: 'newsreader';
+  font-size: 4em;
+  text-align: center;
+}
+
+.dish-form{
+  display: flex;
+  overflow: wrap;
+}
+
+.dish-add{
+  border: 1px solid;
+  border-radius: 25px;
+  margin-left: 1em;
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+}
+
+.dish-add h2{
+  width: 100%;
+}
+
+.dish-add h2{
+  text-align: center;
+}
+
+.name-price-dish{
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  justify-content: center;
+}
+
+.name-price-dish input{
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 0.5em;
+  width: 42.5%;
+}
+
+.dish-add > input{
+  border: 1px solid #000000;
+  border-radius: 8px;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  align-self: center;
+  padding: 0.5em;
+  width: 92%;
+}
+
+.dish-add button{
+  border: 1px solid #000000;
+  border-radius: 4px;
+  background-color: #000000;
+  color: #ffffff;
+  width: 40%;
+  padding: 0.3em;
+  margin-bottom: 1em;
+  align-self: center;
+}
+
+.pratos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; /* espaço entre os pratos */
+  justify-content: center;
+}
+
+.prato {
+  width: 12em;              /* menor largura */
+  padding: 12px;             /* menos espaço interno */
+  border: 1px solid #ccc;    /* borda sutil */
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: center;
+  font-size: 14px;           /* texto menor */
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.prato h1 {
+  font-size: 2em;
+  margin: 0 0 8px 0;
+}
+
+.prato p {
+  font-size: 1.3em;
+  margin: 4px 0;
+}
+
+.prato button {
+  border: 1px solid;
+  border-radius: 5px;
+  background-color:#4b4b4b;
+  color: #ffffff;
+  margin-top: 8px;
+  padding: 6px 10px;
+  font-size: 1em;
 }
 
 /* Redimensionamento de logo baseado na largura da tela */

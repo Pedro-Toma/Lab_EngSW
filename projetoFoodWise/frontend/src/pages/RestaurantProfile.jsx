@@ -9,6 +9,7 @@ function RestaurantProfile(){
 
     const [restaurant, setRestaurant] = useState(null)
     const [error, setError] = useState(null)
+    const [imageUrl, setImageUrl] = useState(null);
     const { restaurant_id } = useParams();
     
     useEffect(() => {
@@ -33,13 +34,32 @@ function RestaurantProfile(){
 
     }, [restaurant_id])
 
+    useEffect(() => {
+        async function fetchImage() {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8000/restaurants/${restaurant_id}/restaurant_image`, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }  
+            })
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                setImageUrl(url);
+            }
+            }
+        fetchImage();
+    }, [restaurant_id]);
+
     return <div className="restaurante-profile-page">
         <h1 className="logo">FoodWise</h1>
         <div className="restaurant-profile">
             {restaurant ? (
                 <>
                     <HorarioFuncionamento restaurant={restaurant}/>
-                    <RestaurantInfo restaurant={restaurant} />
+                    <RestaurantInfo restaurant={restaurant} imageUrl={imageUrl}/>
                 </>
             ) : error ? (
                 <p> {error} </p>

@@ -66,12 +66,14 @@ function ManagerProfile(){
     return <div className="manager-page">
         <h1 className="logo">FoodWise</h1>
         <div className="manager-profile">
-            <img className="profile_image" src="./src/assets/icone_perfil.png" />
+            <div className="image-logout">
+                <img className="profile_image" src="./src/assets/icone_perfil.png" />
+                <LogoutButton />
+            </div>
             <ManagerFrame restaurants={restaurants} refreshRestaurants={refreshRestaurants}/>
         </div>
         <div className="container-home-btn">
             <Link to="/" id="manager-homepage-btn" className="home-page-btn">Página Inicial</Link>
-            <LogoutButton />
         </div>
     </div>
 }

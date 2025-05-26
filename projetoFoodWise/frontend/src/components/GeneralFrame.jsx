@@ -1,13 +1,17 @@
 import Cardapio from "./Cardapio"
 import { useState, useEffect } from "react";
 import { useParams,useNavigate } from "react-router-dom";
+import menu from '../assets/ImagemMenu.png';
+import restaurante from '../assets/ImagemRestaurante.png';
 
 function GeneralFrame(){
 
     const [managerId, setManagerId] = useState(null)
     const [error, setError] = useState(null)
-    const { restaurant_id } = useParams();
-    const navigate = useNavigate();
+    const { restaurant_id } = useParams()
+    const navigate = useNavigate()
+    const [menuImage, setMenuImage] = useState(null);
+    const [restaurantImage, setRestaurantImage] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
         address: "",
@@ -47,7 +51,7 @@ function GeneralFrame(){
         sunday_morning_closing: "",
         sunday_afternoon_opening: "",
         sunday_afternoon_closing: ""
-    });
+    })
 
     function parseJwt(token) {
         try {
@@ -160,14 +164,14 @@ function GeneralFrame(){
 
         const data = {
             manager_id: managerId,
-            name: formData.get("restaurant-name"),
+            name: formData.get("name"),
             address: `${formData.get("address")}, ${formData.get("neighborhood")}, ${formData.get("number")}`,
             phone: formData.get("phone"),
-            money: formData.get("Dinheiro") === "on",
-            pix: formData.get("Pix") === "on",
-            credit: formData.get("Credito") === "on",
-            debit: formData.get("Debito") === "on",
-            voucher: formData.get("Vale") === "on",
+            money: formData.get("money") === "on",
+            pix: formData.get("pix") === "on",
+            credit: formData.get("credit") === "on",
+            debit: formData.get("debit") === "on",
+            voucher: formData.get("voucher") === "on",
             monday_morning_opening: formData.get("monday_morning_opening"),
             monday_morning_closing: formData.get("monday_morning_closing"),
             monday_afternoon_opening: formData.get("monday_afternoon_opening"),
@@ -208,18 +212,36 @@ function GeneralFrame(){
                 },
                 body: JSON.stringify(data)
             }); 
-
+            console.log(data)
             const responseData = await response.json();
-
+            let finalRestaurantId = restaurant_id;
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
             }
             
             if (restaurant_id === '-1') {
-                navigate(`/ManagerProfile/`, { replace: true });
+                finalRestaurantId = responseData.id;
             } else {
+                finalRestaurantId = restaurant_id
                 alert("Dados atualizados com sucesso!");
             }
+
+            const formImages = new FormData();
+            if (menuImage) formImages.append("menu_image", menuImage);
+            if (restaurantImage) formImages.append("restaurant_image", restaurantImage);
+
+            const responseImages = await fetch(`http://localhost:8000/restaurants/${finalRestaurantId}/images`, {
+                method: "PUT",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formImages,
+            });
+
+            if (!responseImages.ok) {
+                throw new Error("Erro ao atualizar imagens");
+            }
+
         } catch (error) {
             setError(error.message);
             alert("Erro ao salvar: " + error.message);
@@ -230,8 +252,8 @@ function GeneralFrame(){
         <h1>Dados Gerais do Restaurante</h1>
         <form className="form-general-data" onSubmit={handleSubmit}> 
 
-            <label htmlFor="restaurant-name">Nome </label>
-            <input type="text" id="restaurant-name" name="restaurant-name" placeholder="Nome" minLength="5" maxLength="15" value={formData.name} onChange={handleChange} required/>
+            <label htmlFor="name">Nome </label>
+            <input type="text" id="name" name="name" placeholder="Nome" minLength="2" maxLength="15" value={formData.name} onChange={handleChange} required/>
             
             <label htmlFor="address">Endereço completo </label>
             <input type="text" id="address" name="address" placeholder="Rua" maxLength="40" value={formData.address} onChange={handleChange} required/>
@@ -646,14 +668,13 @@ function GeneralFrame(){
                     </div>
                 </div>
             </div>
-            <Cardapio />
 
             <div className="input-images">
-                <label htmlFor="menu_image"></label>
-                <input type="file" id="menu_image" accept="image/png, image/jpeg"/>
+                <label htmlFor="menu_image"><img src={menu}></img></label>
+                <input type="file" id="menu_image" accept="image/png, image/jpeg" onChange={(e) => setMenuImage(e.target.files[0])}/>
 
-                <label htmlFor="restaurant_image"></label>
-                <input type="file" id="restaurant_image" accept="image/png, image/jpeg"/>
+                <label htmlFor="restaurant_image"><img src={restaurante}></img></label>
+                <input type="file" id="restaurant_image" accept="image/png, image/jpeg" onChange={(e) => setRestaurantImage(e.target.files[0])}/>
             </div>
             
             <div className="reset-submit-btn">

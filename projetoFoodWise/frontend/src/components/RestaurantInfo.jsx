@@ -1,7 +1,8 @@
 import StarRating from "./StarRating"
 import PriceIndex from "./PriceIndex"
+import { Link } from "react-router-dom";
 
-function RestaurantInfo({restaurant}){
+function RestaurantInfo({restaurant, imageUrl}){
 
     const res_image = `/assets/${restaurant.id}.jpg`;
 
@@ -10,14 +11,14 @@ function RestaurantInfo({restaurant}){
         <h1>{restaurant.name}</h1>
         <div className="restaurant-img-ratings">
             <div>
-                <img className="restaurant-prof-img" src={res_image} />
+                <img className="restaurant-prof-img" src={imageUrl} />
             </div>
             <div className="restaurant-ratings">
                 <h2>Avaliação: <StarRating rating={restaurant.rating} /></h2>
                 <h2>Preço: <PriceIndex index={restaurant.price} /></h2>
                 <h2 id="sustentability">Sustentabilidade: <StarRating rating={restaurant.sustentability} /></h2>
                 <h2>Endereço: {restaurant.address}</h2>
-                <button className="menu-btn">Cardápio</button>
+                <Link to={`/RestaurantProfile/${restaurant.id}/Menu`} className="menu-btn-manager">Cardápio</Link>
             </div>
         </div>
     </div>
