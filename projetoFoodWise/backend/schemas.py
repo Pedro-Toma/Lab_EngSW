@@ -40,7 +40,6 @@ class Restaurant(BaseModel):
     sunday_afternoon_opening: Optional[str] = None
     sunday_afternoon_closing: Optional[str] = None
 
-
 class RestaurantOut(Restaurant):
     id: int
 
@@ -82,7 +81,6 @@ class WasteInfoOut(WasteInfo):
 
 class FinancialInfo(BaseModel):
     month_year: str
-    num_customers_served: int
     num_customers_served: int
     gross_revenue: float
     net_revenue: float

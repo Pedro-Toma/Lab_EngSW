@@ -18,8 +18,9 @@ engine = create_engine(db_connection_str)
 #         return None
 #     return Restaurant(**df.iloc[0].to_dict())
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -28,4 +29,3 @@ def get_db():
     finally:
         db.close()
 
-db_dependency = Annotated[Session, Depends(get_db)]

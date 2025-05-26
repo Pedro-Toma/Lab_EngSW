@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Column, Integer, Float, String, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, Column, Integer, Float, LargeBinary, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy.dialects.mysql import LONGBLOB
 
 class Restaurant(Base):
     __tablename__ = 'restaurants'
@@ -50,6 +51,10 @@ class Restaurant(Base):
     sunday_morning_closing = Column(String(15))
     sunday_afternoon_opening = Column(String(15))
     sunday_afternoon_closing = Column(String(15))
+    restaurant_image_data = Column(LONGBLOB, nullable=True)
+    restaurant_image_mime = Column(String(50), nullable=True)
+    menu_image_data = Column(LONGBLOB, nullable=True)
+    menu_image_mime = Column(String(50), nullable=True)
 
 
     manager = relationship("Manager", back_populates="restaurants")

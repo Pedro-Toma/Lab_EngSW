@@ -1,15 +1,18 @@
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 import uvicorn
 import models
 import auth
 
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI, File, HTTPException, Response, UploadFile, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from database import engine, db_dependency
+from database import engine, get_db
 from schemas import Restaurant, RestaurantOut, Manager, OpInfo, OpInfoOut, WasteInfo, WasteInfoOut, FinancialInfo, FinancialInfoOut, Dishes, DishesOut, DishDel, Token
-from typing import List
+from typing import Annotated, List
 from sqlalchemy import or_
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
@@ -29,6 +32,7 @@ models.Base.metadata.create_all(bind=engine)
 
 security = HTTPBearer()
 
+
 # VERIFICAR TOKEN
 @app.get("/validate-token", status_code=status.HTTP_200_OK)
 async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -38,11 +42,71 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
     if payload is None:
         raise HTTPException(status_code=401, detail="Token inválido ou expirado")
 
-# RESTAURANTS ENDPOINTS
+# GET (Lista de Restaurantes para a página inicial)
+@app.get("/restaurants/search", status_code=status.HTTP_200_OK, response_model=List[RestaurantOut], tags=["Restaurants"])
+async def search_restaurants(name: str, db: Session = Depends(get_db)):
+    results = db.query(models.Restaurant).filter(models.Restaurant.name.like(f"%{name.strip()}%")).all()
+    
+    if not results:
+        raise HTTPException(status_code=404, detail="Nenhum restaurante encontrado.")
+    
+    return results
+
+# PUT (inserir imagens)
+@app.put("/restaurants/{restaurant_id}/images", status_code=status.HTTP_200_OK)
+async def update_restaurant_images(
+    restaurant_id: int,
+    db: Session = Depends(get_db),
+    menu_image: UploadFile | None = File(default=None),
+    restaurant_image: UploadFile | None = File(default=None),
+):
+    restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurante não encontrado")
+
+    # Atualizar menu_image
+    if menu_image is not None:
+        content = await menu_image.read()  # ler bytes da imagem
+        restaurant.menu_image_data = content
+        restaurant.menu_image_mime = menu_image.content_type  # ex: 'image/png'
+
+    # Atualizar restaurant_image
+    if restaurant_image is not None:
+        content = await restaurant_image.read()
+        restaurant.restaurant_image_data = content
+        restaurant.restaurant_image_mime = restaurant_image.content_type
+
+    db.commit()
+    db.refresh(restaurant)
+
+    return {"message": "Imagens atualizadas com sucesso"}
+
+# GET MENU IMAGE
+@app.get("/restaurants/{restaurant_id}/menu_image")
+async def get_menu_image(restaurant_id: int, db: Session = Depends(get_db)):
+    restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+
+    if not restaurant or not restaurant.menu_image_data:
+        raise HTTPException(status_code=404, detail="Imagem do menu não encontrada")
+    
+    
+    return Response(content=restaurant.menu_image_data, media_type=restaurant.menu_image_mime)
+
+# GET RESTAURANT IMAGE
+@app.get("/restaurants/{restaurant_id}/restaurant_image")
+async def get_restaurant_image(restaurant_id: int, db: Session = Depends(get_db)):
+    restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+    
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurante não encontrado")
+    if not restaurant.restaurant_image_data:
+        raise HTTPException(status_code=404, detail="Imagem do restaurante não encontrada")
+    
+    return StreamingResponse(BytesIO(restaurant.restaurant_image_data), media_type=restaurant.restaurant_image_mime)
 
 # GET (1 restaurante por ID)
 @app.get("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, response_model=RestaurantOut, tags=["Restaurants"])
-async def retrieve_restaurant(restaurant_id: int, db: db_dependency):
+async def retrieve_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
     
     restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
     
@@ -53,7 +117,7 @@ async def retrieve_restaurant(restaurant_id: int, db: db_dependency):
 
 # POST (1 restaurante)
 @app.post("/restaurant", status_code=status.HTTP_201_CREATED, tags=["Restaurants"])
-async def create_restaurant(restaurant: Restaurant, db: db_dependency):
+async def create_restaurant(restaurant: Restaurant, db: Session = Depends(get_db)):
     
     existing_restaurant = db.query(models.Restaurant).filter(   models.Restaurant.name == restaurant.name,
                                                                 models.Restaurant.address == restaurant.address).first()
@@ -68,7 +132,7 @@ async def create_restaurant(restaurant: Restaurant, db: db_dependency):
 
 # PUT (1 restaurante)
 @app.put("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, tags=["Restaurants"])
-async def update_restaurant(restaurant_id: int, restaurant_update: Restaurant, db: db_dependency):
+async def update_restaurant(restaurant_id: int, restaurant_update: Restaurant, db: Session = Depends(get_db)):
     
     db_restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
     
@@ -96,7 +160,7 @@ async def update_restaurant(restaurant_id: int, restaurant_update: Restaurant, d
 
 # DELETE (1 restaurante por ID)
 @app.delete("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, tags=["Restaurants"])
-async def delete_restaurant(restaurant_id: int, db: db_dependency):
+async def delete_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
     
     db_restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
     
@@ -110,9 +174,21 @@ async def delete_restaurant(restaurant_id: int, db: db_dependency):
 
 # OP INFO
 
+# GET (Info. Operacionais de 1 restaurante)
+@app.get("/restaurant/{restaurant_id}/Op_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_OP"])
+async def get_op_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
+    db_op_data = db.query(models.Operational).filter(
+        models.Operational.restaurant_id == restaurant_id,
+        models.Operational.month_year == month_year
+    ).first()
+
+    if db_op_data is None:
+        raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
+
+
 # POST (Info. Operacionais de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Op_Info", status_code=status.HTTP_201_CREATED, response_model=OpInfoOut, tags=["Restaurants_OP"])
-async def add_op_info(restaurant_id: int, op_data: OpInfo, db: db_dependency):
+async def add_op_info(restaurant_id: int, op_data: OpInfo, db: Session = Depends(get_db)):
     
     existing_data = db.query(models.Operational).filter(models.Operational.restaurant_id == restaurant_id,
                                                      models.Operational.month_year == op_data.month_year).first()
@@ -132,7 +208,7 @@ async def add_op_info(restaurant_id: int, op_data: OpInfo, db: db_dependency):
 
 # PUT (Info. Operacionais de 1 restaurante)
 @app.put("/restaurant/{restaurant_id}/Op_Info", status_code=status.HTTP_200_OK, response_model=OpInfoOut, tags=["Restaurants_OP"])
-async def update_op_info(restaurant_id: int, op_data: OpInfo, db: db_dependency):
+async def update_op_info(restaurant_id: int, op_data: OpInfo, db: Session = Depends(get_db)):
     
     db_op_data = db.query(models.Operational).filter(models.Operational.restaurant_id == restaurant_id,
                                                      models.Operational.month_year == op_data.month_year).first()
@@ -153,9 +229,20 @@ async def update_op_info(restaurant_id: int, op_data: OpInfo, db: db_dependency)
 
 # WASTE INFO
 
+# GET (Info. Monit. de Desperdício de 1 restaurante)
+@app.get("/restaurant/{restaurant_id}/Waste_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_W"])
+async def get_waste_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
+    db_waste_data = db.query(models.Waste).filter(
+        models.Waste.restaurant_id == restaurant_id,
+        models.Waste.month_year == month_year
+    ).first()
+
+    if db_waste_data is None:
+        raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
+
 # POST (Info. Monit. de Desperdício de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Waste_Info", status_code=status.HTTP_201_CREATED, response_model=WasteInfo, tags=["Restaurants_W"])
-async def add_waste_data(restaurant_id: int, waste_data: WasteInfo, db: db_dependency):
+async def add_waste_data(restaurant_id: int, waste_data: WasteInfo, db: Session = Depends(get_db)):
     
     existing_data = db.query(models.Waste).filter(models.Waste.restaurant_id == restaurant_id,
                                                      models.Waste.month_year == waste_data.month_year).first()
@@ -175,7 +262,7 @@ async def add_waste_data(restaurant_id: int, waste_data: WasteInfo, db: db_depen
 
 # PUT (Info. Monit. de Desperdício de 1 restaurante)
 @app.put("/restaurant/{restaurant_id}/Waste_Info", status_code=status.HTTP_200_OK, response_model=WasteInfoOut, tags=["Restaurants_W"])
-async def update_waste_info(restaurant_id: int, waste_data: WasteInfo, db: db_dependency):
+async def update_waste_info(restaurant_id: int, waste_data: WasteInfo, db: Session = Depends(get_db)):
     
     db_waste_data = db.query(models.Waste).filter(  models.Waste.restaurant_id == restaurant_id,
                                                     models.Waste.month_year == waste_data.month_year).first()
@@ -196,9 +283,20 @@ async def update_waste_info(restaurant_id: int, waste_data: WasteInfo, db: db_de
 
 # FINANCIAL INFO
 
+# GET (Info. Financeiras de 1 restaurante)
+@app.get("/restaurant/{restaurant_id}/Financial_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_F"])
+async def get_fin_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
+    db_fin_data = db.query(models.Financial).filter(
+        models.Financial.restaurant_id == restaurant_id,
+        models.Financial.month_year == month_year
+    ).first()
+
+    if db_fin_data is None:
+        raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
+    
 # POST (Info. Finaceiras de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Financial_Info", status_code=status.HTTP_201_CREATED, response_model=FinancialInfo, tags=["Restaurants_F"])
-async def add_fin_data(restaurant_id: int, fin_data: FinancialInfo, db: db_dependency):
+async def add_fin_data(restaurant_id: int, fin_data: FinancialInfo, db: Session = Depends(get_db)):
     
     existing_data = db.query(models.Financial).filter(  models.Financial.restaurant_id == restaurant_id,
                                                         models.Financial.month_year == fin_data.month_year).first()
@@ -218,7 +316,7 @@ async def add_fin_data(restaurant_id: int, fin_data: FinancialInfo, db: db_depen
 
 # PUT (Info. Monit. de Desperdício de 1 restaurante)
 @app.put("/restaurant/{restaurant_id}/Financial_Info", status_code=status.HTTP_200_OK, response_model=FinancialInfoOut, tags=["Restaurants_F"])
-async def update_fin_info(restaurant_id: int, fin_data: FinancialInfo, db: db_dependency):
+async def update_fin_info(restaurant_id: int, fin_data: FinancialInfo, db: Session = Depends(get_db)):
     
     db_fin_data = db.query(models.Financial).filter(    models.Financial.restaurant_id == restaurant_id,
                                                         models.Financial.month_year == fin_data.month_year).first()
@@ -241,7 +339,7 @@ async def update_fin_info(restaurant_id: int, fin_data: FinancialInfo, db: db_de
 
 # GET (obtém todos os pratos)
 @app.get("/restaurant/{restaurant_id}/menu", status_code=status.HTTP_200_OK, response_model=List[DishesOut], tags=["Restaurants_Menu"])
-async def retrieve_dishes(restaurant_id: int, db: db_dependency):
+async def retrieve_dishes(restaurant_id: int, db: Session = Depends(get_db)):
     
     menu = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
     
@@ -252,7 +350,7 @@ async def retrieve_dishes(restaurant_id: int, db: db_dependency):
 
 # POST (insere um prato no menu)
 @app.post("/restaurant/{restaurant_id}/menu", status_code=status.HTTP_201_CREATED, response_model=DishesOut, tags=["Restaurants_Menu"])
-async def add_dish(restaurant_id: int, dish_data: Dishes, db: db_dependency):
+async def add_dish(restaurant_id: int, dish_data: Dishes, db: Session = Depends(get_db)):
     
     exist_dish = db.query(models.Dishes).filter(    models.Dishes.restaurant_id == restaurant_id,
                                                     models.Dishes.name == dish_data.name).first()
@@ -272,7 +370,7 @@ async def add_dish(restaurant_id: int, dish_data: Dishes, db: db_dependency):
 
 # PUT (atualiza um prato no menu)
 @app.put("/restaurant/{restaurant_id}/menu", status_code=status.HTTP_200_OK, response_model=DishesOut, tags=["Restaurants_Menu"])
-async def add_dish(restaurant_id: int, dish_data: Dishes, db: db_dependency):
+async def add_dish(restaurant_id: int, dish_data: Dishes, db: Session = Depends(get_db)):
     db_dish_data = db.query(models.Dishes).filter(  models.Dishes.restaurant_id == restaurant_id,
                                                     models.Dishes.name == dish_data.name).first()
     if db_dish_data is None:
@@ -292,7 +390,7 @@ async def add_dish(restaurant_id: int, dish_data: Dishes, db: db_dependency):
 
 # DEL (deleta um prato no menu)
 @app.delete("/restaurant/{restaurant_id}/menu", status_code=status.HTTP_200_OK, tags=["Restaurants_Menu"])
-async def delete_dish(restaurant_id: int, dish_data: DishDel, db: db_dependency):
+async def delete_dish(restaurant_id: int, dish_data: DishDel, db: Session = Depends(get_db)):
     
     db_menu = db.query(models.Dishes).filter(models.Dishes.restaurant_id == restaurant_id,
                                              models.Dishes.name == dish_data.name).first()
@@ -307,7 +405,7 @@ async def delete_dish(restaurant_id: int, dish_data: DishDel, db: db_dependency)
 
 # POST REGISTRO (1 gerente)
 @app.post("/manager/register", status_code=status.HTTP_201_CREATED, tags=["Managers"])
-async def create_manager(manager: Manager, db: db_dependency):
+async def create_manager(manager: Manager, db: Session = Depends(get_db)):
     
     existing_manager = db.query(models.Manager).filter(models.Manager.email == manager.email).first()
     
@@ -326,7 +424,7 @@ async def create_manager(manager: Manager, db: db_dependency):
 
 # POST LOGIN (1 gerente)
 @app.post("/manager/login", status_code=status.HTTP_201_CREATED, tags=["Managers"])
-async def verify_manager(manager: Manager, db: db_dependency):
+async def verify_manager(manager: Manager, db: Session = Depends(get_db)):
     
     existing_manager = db.query(models.Manager).filter(models.Manager.email == manager.email).first()
     
@@ -343,7 +441,7 @@ async def verify_manager(manager: Manager, db: db_dependency):
 
 # GET (TODOS os restaurante de um gerente)
 @app.get("/manager/{manager_id}/restaurants", status_code=status.HTTP_200_OK, response_model=List[RestaurantOut], tags=["Managers"])
-async def retrieve_manager_restaurants(manager_id: int, db: db_dependency):
+async def retrieve_manager_restaurants(manager_id: int, db: Session = Depends(get_db)):
     
     manager = db.query(models.Manager).filter(models.Manager.id == manager_id).first()
     
