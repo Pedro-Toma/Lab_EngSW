@@ -132,7 +132,7 @@ function HomePage(){
                 {isSearchLoading && searchTerm.trim() !== "" ? (
                     <h1>Carregando...</h1>
                 ) : notFound && searchTerm.trim() !== "" ? (
-                    <p>Restaurante não encontrado.</p>
+                    <h1>Restaurante não encontrado.</h1>
                 ) : (
                     <RestaurantHomeList restaurants={restaurants} />
                 )}

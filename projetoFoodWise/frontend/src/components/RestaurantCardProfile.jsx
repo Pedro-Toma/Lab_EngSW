@@ -1,5 +1,6 @@
 import { Link,useNavigate } from 'react-router-dom'
 import { useState,useEffect } from 'react';
+
 import trash from "../assets/trash.png"
 
 function RestaurantCardProfile({name, image, restaurant_id, removeRestaurant}) {
@@ -34,8 +35,8 @@ function RestaurantCardProfile({name, image, restaurant_id, removeRestaurant}) {
             <div className="restaurant-info">
                 <div className="restaurant-name-report">
                     <button className="restaurant-name-btn" onClick={() => navigate(`/RestaurantProfile/${restaurant_id}`)}>{name}</button>
-                    <Link to={`/RestaurantProfile/${restaurant_id}/Menu`} className="menu-btn-manager">Cardápio</Link>
-                    <button className="private-report-btn">Relatório</button>
+                    <Link to={`/RestaurantProfile/${restaurant_id}/Menu`} className="menu-report-btn-manager">Cardápio</Link>
+                    <Link to={`/RestaurantProfile/${restaurant_id}/ReportPage`} className="menu-report-btn-manager">Relatório</Link>
                 </div>
                 <div className="restaurant-data">
                     <Link to={`/ManagerProfile/${restaurant_id}/GeneralData`} className="general-data-btn">Dados Gerais</Link>

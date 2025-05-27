@@ -7,10 +7,9 @@ import auth
 from fastapi import FastAPI, File, HTTPException, Response, UploadFile, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
 from database import engine, get_db
 from schemas import Restaurant, RestaurantOut, Manager, OpInfo, OpInfoOut, WasteInfo, WasteInfoOut, FinancialInfo, FinancialInfoOut, Dishes, DishesOut, DishDel, Token
-from typing import Annotated, List
+from typing import List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
@@ -104,6 +103,16 @@ async def get_restaurant_image(restaurant_id: int, db: Session = Depends(get_db)
     
     return StreamingResponse(BytesIO(restaurant.restaurant_image_data), media_type=restaurant.restaurant_image_mime)
 
+# GET (nome do restaurante por ID)
+@app.get("/restaurant/{restaurant_id}/name", status_code=status.HTTP_200_OK, tags=["Restaurants"])
+async def retrieve_restaurant_name(restaurant_id: int, db: Session = Depends(get_db)):
+    
+    restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+    if restaurant is None:
+        raise HTTPException(status_code=404, detail="Restaurante não encontrado!")
+    
+    return {"name" :restaurant.name}
+
 # GET (1 restaurante por ID)
 @app.get("/restaurant/{restaurant_id}", status_code=status.HTTP_200_OK, response_model=RestaurantOut, tags=["Restaurants"])
 async def retrieve_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
@@ -175,7 +184,7 @@ async def delete_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
 # OP INFO
 
 # GET (Info. Operacionais de 1 restaurante)
-@app.get("/restaurant/{restaurant_id}/Op_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_OP"])
+@app.get("/restaurant/{restaurant_id}/Op_Info/{month_year}", status_code=status.HTTP_200_OK, response_model=OpInfoOut, tags=["Restaurants_OP"])
 async def get_op_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
     db_op_data = db.query(models.Operational).filter(
         models.Operational.restaurant_id == restaurant_id,
@@ -185,6 +194,7 @@ async def get_op_info(restaurant_id: int, month_year: str, db: Session = Depends
     if db_op_data is None:
         raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
 
+    return db_op_data
 
 # POST (Info. Operacionais de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Op_Info", status_code=status.HTTP_201_CREATED, response_model=OpInfoOut, tags=["Restaurants_OP"])
@@ -230,7 +240,7 @@ async def update_op_info(restaurant_id: int, op_data: OpInfo, db: Session = Depe
 # WASTE INFO
 
 # GET (Info. Monit. de Desperdício de 1 restaurante)
-@app.get("/restaurant/{restaurant_id}/Waste_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_W"])
+@app.get("/restaurant/{restaurant_id}/Waste_Info/{month_year}", status_code=status.HTTP_200_OK, response_model=WasteInfoOut, tags=["Restaurants_W"])
 async def get_waste_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
     db_waste_data = db.query(models.Waste).filter(
         models.Waste.restaurant_id == restaurant_id,
@@ -240,6 +250,7 @@ async def get_waste_info(restaurant_id: int, month_year: str, db: Session = Depe
     if db_waste_data is None:
         raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
 
+    return db_waste_data
 # POST (Info. Monit. de Desperdício de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Waste_Info", status_code=status.HTTP_201_CREATED, response_model=WasteInfo, tags=["Restaurants_W"])
 async def add_waste_data(restaurant_id: int, waste_data: WasteInfo, db: Session = Depends(get_db)):
@@ -284,7 +295,7 @@ async def update_waste_info(restaurant_id: int, waste_data: WasteInfo, db: Sessi
 # FINANCIAL INFO
 
 # GET (Info. Financeiras de 1 restaurante)
-@app.get("/restaurant/{restaurant_id}/Financial_Info/{month_year}", status_code=status.HTTP_200_OK, tags=["Restaurants_F"])
+@app.get("/restaurant/{restaurant_id}/Financial_Info/{month_year}", status_code=status.HTTP_200_OK, response_model=FinancialInfoOut, tags=["Restaurants_F"])
 async def get_fin_info(restaurant_id: int, month_year: str, db: Session = Depends(get_db)):
     db_fin_data = db.query(models.Financial).filter(
         models.Financial.restaurant_id == restaurant_id,
@@ -294,6 +305,8 @@ async def get_fin_info(restaurant_id: int, month_year: str, db: Session = Depend
     if db_fin_data is None:
         raise HTTPException(status_code=404, detail="Informações operacionais não encontradas para este mês.")
     
+    return db_fin_data
+
 # POST (Info. Finaceiras de 1 restaurante)
 @app.post("/restaurant/{restaurant_id}/Financial_Info", status_code=status.HTTP_201_CREATED, response_model=FinancialInfo, tags=["Restaurants_F"])
 async def add_fin_data(restaurant_id: int, fin_data: FinancialInfo, db: Session = Depends(get_db)):

@@ -18,7 +18,7 @@ function RestaurantInfo({restaurant, imageUrl}){
                 <h2>Preço: <PriceIndex index={restaurant.price} /></h2>
                 <h2 id="sustentability">Sustentabilidade: <StarRating rating={restaurant.sustentability} /></h2>
                 <h2>Endereço: {restaurant.address}</h2>
-                <Link to={`/RestaurantProfile/${restaurant.id}/Menu`} className="menu-btn-manager">Cardápio</Link>
+                <Link to={`/RestaurantProfile/${restaurant.id}/Menu`} className="menu-report-btn-manager">Cardápio</Link>
             </div>
         </div>
     </div>

@@ -1,4 +1,3 @@
-import Cardapio from "./Cardapio"
 import { useState, useEffect } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import menu from '../assets/ImagemMenu.png';
